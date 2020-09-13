@@ -1,0 +1,81 @@
+<!-- HTML -->
+<!DOCTYPE html><html><head>
+<title>さばえレシピガチャ</title>
+<meta property="og:title" content="さばえレシピガチャ">
+<meta name="twitter:card" content="summary_large_image"/>
+<meta property="og:image"  content="https://code4sabae.github.io/recipe/ogp.png">
+<meta name="twitter:image" content="https://code4sabae.github.io/recipe/ogp.png">
+</head><body>
+<h1>さばえレシピガチャ</h1>
+<button id=btn>ガチャ</button>
+<div id=recipe>料理が表示されるよ</div>
+<div id=src>
+データ出典：<a href=https://ckan.odp.jig.jp/dataset/202003003/resource/9f0a20d3-37cf-4b4e-b086-8291e0aa97d7>さばえ地場産野菜の料理レシピ</a> / <a href=https://data.city.sabae.lg.jp/>データシティ鯖江</a><br>
+</div>
+
+<!-- CSS(スタイルシート) -->
+<style>
+body {
+  text-align: center;
+  background-color: rgb(243, 138, 68);
+  color: white;
+  font-family: sans-serif;
+}
+h1 {
+  font-size: 10vw;
+  margin: 0;
+  padding: 0;
+}
+button {
+  padding: 2em;
+  font-size: 200%;
+  margin: .5em;
+}
+#recipe {
+  border: 4px solid white;
+  margin: 1em;
+  padding: 1em;
+}
+a {
+  color: white !important;
+}
+</style>
+
+<!-- JavaScript -->
+<script type="module">
+import util from "https://taisukef.github.io/util/util.mjs";
+
+window.onload = async () => {
+  const url = "./sabae_recipe.csv";
+  const json = await util.fetchCSVtoJSON(url);
+  console.log(json);
+
+  btn.onclick = async () => {
+    const sleep = util.sleep;
+    recipe.innerHTML = "";
+    btn.textContent = "なにがでるかな....";
+    await sleep(1000);
+    const r = json[util.rnd(json.length)];
+    btn.textContent = "ジャン！";
+    await sleep(500);
+    btn.textContent = r.料理名;
+    recipe.innerHTML = `<a href=${r.詳細URL}><h2>${r.料理名}(${r.人数})</h2></a><br>`;
+    for (let i = 1; i <= 8; i++) {
+      const z = r["材料" + i];
+      console.log(z, i);
+      if (!z) {
+        break;
+      }
+      await sleep(500);
+      recipe.innerHTML += z + "<br>";
+    }
+    await sleep(1000);
+    btn.textContent = "つくってみてね！";
+    await sleep(3000);
+    btn.textContent = "ガチャ";
+  };
+};
+</script>
+
+</body>
+</html>
